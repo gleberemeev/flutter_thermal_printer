@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:flutter_thermal_printer/Windows/window_printer_manager.dart';
 import 'package:flutter_thermal_printer/utils/printer.dart';
 import 'package:image/image.dart' as img;
 import 'package:screenshot/screenshot.dart';
@@ -13,8 +12,7 @@ import 'package:screenshot/screenshot.dart';
 import 'Others/other_printers_manager.dart';
 
 export 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
-export 'package:flutter_blue_plus/flutter_blue_plus.dart'
-    show BluetoothDevice, BluetoothConnectionState;
+export 'package:flutter_blue_plus/flutter_blue_plus.dart' show BluetoothDevice, BluetoothConnectionState;
 export 'package:flutter_thermal_printer/network/network_printer.dart';
 
 class FlutterThermalPrinter {
@@ -29,19 +27,11 @@ class FlutterThermalPrinter {
   }
 
   Stream<List<Printer>> get devicesStream {
-    if (Platform.isWindows) {
-      return WindowPrinterManager.instance.devicesStream;
-    } else {
-      return OtherPrinterManager.instance.devicesStream;
-    }
+    return OtherPrinterManager.instance.devicesStream;
   }
 
   Future<bool> connect(Printer device) async {
-    if (Platform.isWindows) {
-      return await WindowPrinterManager.instance.connect(device);
-    } else {
-      return await OtherPrinterManager.instance.connect(device);
-    }
+    return await OtherPrinterManager.instance.connect(device);
   }
 
   Future<void> disconnect(Printer device) async {
@@ -57,74 +47,40 @@ class FlutterThermalPrinter {
     List<int> bytes, {
     bool longData = false,
   }) async {
-    if (Platform.isWindows) {
-      return await WindowPrinterManager.instance.printData(
-        device,
-        bytes,
-        longData: longData,
-      );
-    } else {
-      return await OtherPrinterManager.instance.printData(
-        device,
-        bytes,
-        longData: longData,
-      );
-    }
+    return await OtherPrinterManager.instance.printData(
+      device,
+      bytes,
+      longData: longData,
+    );
   }
 
   Future<void> getPrinters({
     Duration refreshDuration = const Duration(seconds: 2),
-    List<ConnectionType> connectionTypes = const [
-      ConnectionType.USB,
-      ConnectionType.BLE
-    ],
+    List<ConnectionType> connectionTypes = const [ConnectionType.USB, ConnectionType.BLE],
     bool androidUsesFineLocation = false,
   }) async {
-    if (Platform.isWindows) {
-      WindowPrinterManager.instance.getPrinters(
-        refreshDuration: refreshDuration,
-        connectionTypes: connectionTypes,
-      );
-    } else {
-      OtherPrinterManager.instance.getPrinters(
-        connectionTypes: connectionTypes,
-        androidUsesFineLocation: androidUsesFineLocation,
-      );
-    }
+    OtherPrinterManager.instance.getPrinters(
+      connectionTypes: connectionTypes,
+      androidUsesFineLocation: androidUsesFineLocation,
+    );
   }
 
   Future<void> stopScan() async {
-    if (Platform.isWindows) {
-      WindowPrinterManager.instance.stopscan();
-    } else {
-      OtherPrinterManager.instance.stopScan();
-    }
+    OtherPrinterManager.instance.stopScan();
   }
 
   // Turn On Bluetooth
   Future<void> turnOnBluetooth() async {
-    if (Platform.isWindows) {
-      await WindowPrinterManager.instance.turnOnBluetooth();
-    } else {
-      await OtherPrinterManager.instance.turnOnBluetooth();
-    }
+    await OtherPrinterManager.instance.turnOnBluetooth();
   }
 
   Stream<bool> get isBleTurnedOnStream {
-    if (Platform.isWindows) {
-      return WindowPrinterManager.instance.isBleTurnedOnStream;
-    } else {
-      return OtherPrinterManager.instance.isBleTurnedOnStream;
-    }
+    return OtherPrinterManager.instance.isBleTurnedOnStream;
   }
 
   // Get BleState
   Future<bool> isBleTurnedOn() async {
-    if (Platform.isWindows) {
-      return await WindowPrinterManager.instance.isBleTurnedOn();
-    } else {
-      return FlutterBluePlus.adapterStateNow == BluetoothAdapterState.on;
-    }
+    return FlutterBluePlus.adapterStateNow == BluetoothAdapterState.on;
   }
 
   Future<Uint8List> screenShotWidget(
@@ -136,8 +92,8 @@ class FlutterThermalPrinter {
     Generator? generator,
   }) async {
     final controller = ScreenshotController();
-    final image = await controller.captureFromLongWidget(widget,
-        pixelRatio: View.of(context).devicePixelRatio, delay: delay);
+    final image =
+        await controller.captureFromLongWidget(widget, pixelRatio: View.of(context).devicePixelRatio, delay: delay);
     Generator? generator0;
     if (generator == null) {
       final profile = await CapabilityProfile.load();

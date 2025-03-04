@@ -93,7 +93,7 @@ class FlutterThermalPrinter {
   }) async {
     final controller = ScreenshotController();
     final image =
-        await controller.captureFromLongWidget(widget, pixelRatio: View.of(context).devicePixelRatio, delay: delay);
+        await controller.captureFromLongWidget(widget, delay: delay);
     Generator? generator0;
     if (generator == null) {
       final profile = await CapabilityProfile.load();
